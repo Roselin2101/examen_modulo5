@@ -3,9 +3,13 @@ class TweetsController < ApplicationController
 
   # GET /tweets or /tweets.json
   def index
-    @tweets = Tweet.all
+    @tweets = if params[:search]
+                Tweet.where("username LIKE ?", "%#{params[:search]}%")
+              else
+                Tweet.all
+              end.will_paginate(page: params[:page], per_page: 10)
   end
-
+ 
   # GET /tweets/1 or /tweets/1.json
   def show
   end
@@ -25,7 +29,7 @@ class TweetsController < ApplicationController
 
     respond_to do |format|
       if @tweet.save
-        format.html { redirect_to tweet_url(@tweet), notice: "Tweet was successfully created." }
+        format.html { redirect_to tweet_url(@tweet), notice: "El Tweet fúe creado satisfactoriamente." }
         format.json { render :show, status: :created, location: @tweet }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +42,7 @@ class TweetsController < ApplicationController
   def update
     respond_to do |format|
       if @tweet.update(tweet_params)
-        format.html { redirect_to tweet_url(@tweet), notice: "Tweet was successfully updated." }
+        format.html { redirect_to tweet_url(@tweet), notice: "El Tweet fúe actualizado satisfactoriamente." }
         format.json { render :show, status: :ok, location: @tweet }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -49,10 +53,11 @@ class TweetsController < ApplicationController
 
   # DELETE /tweets/1 or /tweets/1.json
   def destroy
+    @tweet = Tweet.find(params[:id])
     @tweet.destroy
 
     respond_to do |format|
-      format.html { redirect_to tweets_url, notice: "Tweet was successfully destroyed." }
+      format.html { redirect_to tweets_url, notice: "El Tweet fúe eliminado satisfactoriamente." }
       format.json { head :no_content }
     end
   end
@@ -65,13 +70,6 @@ class TweetsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def tweet_params
-      params.require(:tweet).permit(:description, :userName)
+      params.require(:tweet).permit(:description, :username, :profile)
     end
-
-    def index
-      @tweets = Tweet.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
-    end
-    
 end
-
-
