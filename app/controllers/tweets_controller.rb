@@ -67,4 +67,11 @@ class TweetsController < ApplicationController
     def tweet_params
       params.require(:tweet).permit(:description, :userName)
     end
+
+    def index
+      @tweets = Tweet.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+    end
+    
 end
+
+

@@ -1,3 +1,14 @@
+<h1>Tweets</h1>
+
+<% @tweets.each do |tweet| %>
+  <div class="tweet">
+    <h3><%= tweet.userName %></h3>
+    <p><%= tweet.description %></p>
+  </div>
+<% end %>
+
+<%= will_paginate @tweets %>
+
 <p style="color: green"><%= notice %></p>
 
 <h1>Tweets</h1>
@@ -12,3 +23,4 @@
 </div>
 
 <%= link_to "New tweet", new_tweet_path %>
+
